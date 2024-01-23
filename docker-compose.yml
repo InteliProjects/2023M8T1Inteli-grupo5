@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./src/ide/frontend/Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_BACKEND_URL=http://backend:80
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./src/ide/CareApi/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./src/ide/MongoInit/init-db.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    restart: "unless-stopped"
